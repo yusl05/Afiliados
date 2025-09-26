@@ -104,8 +104,9 @@
             this.cBMunicipio.FormattingEnabled = true;
             this.cBMunicipio.Location = new System.Drawing.Point(148, 149);
             this.cBMunicipio.Name = "cBMunicipio";
-            this.cBMunicipio.Size = new System.Drawing.Size(149, 28);
+            this.cBMunicipio.Size = new System.Drawing.Size(251, 28);
             this.cBMunicipio.TabIndex = 7;
+            this.cBMunicipio.SelectedIndexChanged += new System.EventHandler(this.cBMunicipio_SelectedIndexChanged);
             // 
             // dGVInformacion
             // 
@@ -188,7 +189,7 @@
             // 
             this.rTBEstado.Location = new System.Drawing.Point(148, 109);
             this.rTBEstado.Name = "rTBEstado";
-            this.rTBEstado.Size = new System.Drawing.Size(149, 31);
+            this.rTBEstado.Size = new System.Drawing.Size(251, 31);
             this.rTBEstado.TabIndex = 11;
             this.rTBEstado.Text = "";
             // 
