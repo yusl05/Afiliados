@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,20 +17,13 @@ namespace Afiliados
 {
     public partial class FrmAfiliados : Form
     {
-        List<string> columnas;
         public FrmAfiliados()
         {
             InitializeComponent();
-            columnas = new List<string>();
-            columnas.Add("ID");
-            columnas.Add("Entidad");
-            columnas.Add("Municipio");
-            columnas.Add("Nombre");
-            columnas.Add("Fecha afiliacion");
-            columnas.Add("Estatus");
+            
         }
 
-        //Thread hilo;
+        Thread hilo;
         string archivo;
         private void btnCargar_Click(object sender, EventArgs e)
         {
@@ -37,6 +31,7 @@ namespace Afiliados
             {
                 archivo = oFDAfiliados.FileName;
                 rTBArchivo.Text = oFDAfiliados.SafeFileName;
+                dGVInformacion.Rows.Clear();
                 CargarExcel(archivo);
             }
         }
@@ -80,6 +75,7 @@ namespace Afiliados
                         dGVInformacion.Rows[i - 2].Cells[j - 1].Value = columna;
                     }  
                 }
+                conteoAfiliados();
 
                 //Añadir municipios a ComboBox
                 cBMunicipio.Items.Add("NINGUNO");
@@ -97,37 +93,78 @@ namespace Afiliados
 
         private void cBMunicipio_SelectedIndexChanged(object sender, EventArgs e)
         {
-            dGVInformacion.Rows.Clear();    
-            ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
-
-            //Thread.Sleep(100);
-            using (var package = new ExcelPackage(new System.IO.FileInfo(archivo)))
+            if (cBMunicipio.Text.Equals("NINGUNO"))
             {
-                //Tomar primera página del archivo xslx
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                dGVInformacion.Rows.Clear();
+                CargarExcel(archivo);
+            } else if (cBMunicipio.Text.Equals("SIN MUNICIPIO ASIGNADO"))
+            {
+                dGVInformacion.Rows.Clear();
+                ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
 
-                int rowCount = worksheet.Dimension.End.Row;
-                //dGVInformacion.Rows.Add(rowCount - 1);
-                int k = 0;
-                for (int i = 2; i < rowCount + 1; i++)
+                //Thread.Sleep(100);
+                using (var package = new ExcelPackage(new System.IO.FileInfo(archivo)))
                 {
-                    if (cBMunicipio.Text.Equals(worksheet.Cells[i, 3].Text))
-                    {
-                        dGVInformacion.Rows.Add();
-                        for (int j = 1; j < dGVInformacion.Columns.Count + 1; j++)
-                        {
-                            var columna = worksheet.Cells[i, j].Text;
-                            dGVInformacion.Rows[k].Cells[j - 1].Value = columna;
-                        }
-                        k = k + 1 ;
-                    }
-                    
-                }
+                    //Tomar primera página del archivo xslx
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
+                    int rowCount = worksheet.Dimension.End.Row;
+                    //dGVInformacion.Rows.Add(rowCount - 1);
+                    int k = 0;
+                    for (int i = 2; i < rowCount + 1; i++)
+                    {
+                        if (worksheet.Cells[i, 3].Text.Equals(""))
+                        {
+                            dGVInformacion.Rows.Add();
+                            for (int j = 1; j < dGVInformacion.Columns.Count + 1; j++)
+                            {
+                                var columna = worksheet.Cells[i, j].Text;
+                                dGVInformacion.Rows[k].Cells[j - 1].Value = columna;
+                            }
+                            k = k + 1;
+                        }
+
+                    }
+                }
+            } else 
+            {
+                dGVInformacion.Rows.Clear();
+                ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
+
+                //Thread.Sleep(100);
+                using (var package = new ExcelPackage(new System.IO.FileInfo(archivo)))
+                {
+                    //Tomar primera página del archivo xslx
+                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+
+                    int rowCount = worksheet.Dimension.End.Row;
+                    //dGVInformacion.Rows.Add(rowCount - 1);
+                    int k = 0;
+                    for (int i = 2; i < rowCount + 1; i++)
+                    {
+                        if (cBMunicipio.Text.Equals(worksheet.Cells[i, 3].Text))
+                        {
+                            dGVInformacion.Rows.Add();
+                            for (int j = 1; j < dGVInformacion.Columns.Count + 1; j++)
+                            {
+                                var columna = worksheet.Cells[i, j].Text;
+                                dGVInformacion.Rows[k].Cells[j - 1].Value = columna;
+                            }
+                            k = k + 1;
+                        }
+
+                    }
+                }
             }
+            conteoAfiliados();
+
         }
 
-
+        public void conteoAfiliados()
+        {
+            int numAfiliados = dGVInformacion.Rows.Count - 1;
+            rTBAfiliados.Text = (numAfiliados).ToString();
+        }
 
     }
 }

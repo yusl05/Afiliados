@@ -44,9 +44,13 @@
             this.labNumAfiliado = new System.Windows.Forms.Label();
             this.rTBArchivo = new System.Windows.Forms.RichTextBox();
             this.rTBEstado = new System.Windows.Forms.RichTextBox();
-            this.tBNumAfiliado = new System.Windows.Forms.TextBox();
             this.chBxFecha = new System.Windows.Forms.CheckBox();
             this.oFDAfiliados = new System.Windows.Forms.OpenFileDialog();
+            this.dTPInicio = new System.Windows.Forms.DateTimePicker();
+            this.dTPFin = new System.Windows.Forms.DateTimePicker();
+            this.labInicio = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.rTBAfiliados = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dGVInformacion)).BeginInit();
             this.SuspendLayout();
             // 
@@ -173,9 +177,9 @@
             this.labNumAfiliado.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labNumAfiliado.Location = new System.Drawing.Point(25, 525);
             this.labNumAfiliado.Name = "labNumAfiliado";
-            this.labNumAfiliado.Size = new System.Drawing.Size(228, 22);
+            this.labNumAfiliado.Size = new System.Drawing.Size(117, 22);
             this.labNumAfiliado.TabIndex = 9;
-            this.labNumAfiliado.Text = "NÚMERO DE AFILIADO:";
+            this.labNumAfiliado.Text = "AFILIADOS:";
             // 
             // rTBArchivo
             // 
@@ -193,13 +197,6 @@
             this.rTBEstado.TabIndex = 11;
             this.rTBEstado.Text = "";
             // 
-            // tBNumAfiliado
-            // 
-            this.tBNumAfiliado.Location = new System.Drawing.Point(259, 521);
-            this.tBNumAfiliado.Name = "tBNumAfiliado";
-            this.tBNumAfiliado.Size = new System.Drawing.Size(169, 26);
-            this.tBNumAfiliado.TabIndex = 12;
-            // 
             // chBxFecha
             // 
             this.chBxFecha.AutoSize = true;
@@ -216,13 +213,59 @@
             this.oFDAfiliados.FileName = "openFileDialog1";
             this.oFDAfiliados.Filter = "ArchivosExcel|*.xlsx";
             // 
+            // dTPInicio
+            // 
+            this.dTPInicio.Location = new System.Drawing.Point(98, 605);
+            this.dTPInicio.Name = "dTPInicio";
+            this.dTPInicio.Size = new System.Drawing.Size(200, 26);
+            this.dTPInicio.TabIndex = 14;
+            // 
+            // dTPFin
+            // 
+            this.dTPFin.Location = new System.Drawing.Point(381, 605);
+            this.dTPFin.Name = "dTPFin";
+            this.dTPFin.Size = new System.Drawing.Size(200, 26);
+            this.dTPFin.TabIndex = 15;
+            // 
+            // labInicio
+            // 
+            this.labInicio.AutoSize = true;
+            this.labInicio.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labInicio.Location = new System.Drawing.Point(24, 608);
+            this.labInicio.Name = "labInicio";
+            this.labInicio.Size = new System.Drawing.Size(68, 22);
+            this.labInicio.TabIndex = 16;
+            this.labInicio.Text = "INICIO";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(334, 605);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(41, 22);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "FIN";
+            // 
+            // rTBAfiliados
+            // 
+            this.rTBAfiliados.Location = new System.Drawing.Point(148, 524);
+            this.rTBAfiliados.Name = "rTBAfiliados";
+            this.rTBAfiliados.Size = new System.Drawing.Size(150, 31);
+            this.rTBAfiliados.TabIndex = 18;
+            this.rTBAfiliados.Text = "";
+            // 
             // FrmAfiliados
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1138, 615);
+            this.ClientSize = new System.Drawing.Size(1138, 647);
+            this.Controls.Add(this.rTBAfiliados);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.labInicio);
+            this.Controls.Add(this.dTPFin);
+            this.Controls.Add(this.dTPInicio);
             this.Controls.Add(this.chBxFecha);
-            this.Controls.Add(this.tBNumAfiliado);
             this.Controls.Add(this.rTBEstado);
             this.Controls.Add(this.rTBArchivo);
             this.Controls.Add(this.labNumAfiliado);
@@ -259,9 +302,13 @@
         private System.Windows.Forms.Label labNumAfiliado;
         private System.Windows.Forms.RichTextBox rTBArchivo;
         private System.Windows.Forms.RichTextBox rTBEstado;
-        private System.Windows.Forms.TextBox tBNumAfiliado;
         private System.Windows.Forms.CheckBox chBxFecha;
         private System.Windows.Forms.OpenFileDialog oFDAfiliados;
+        private System.Windows.Forms.DateTimePicker dTPInicio;
+        private System.Windows.Forms.DateTimePicker dTPFin;
+        private System.Windows.Forms.Label labInicio;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RichTextBox rTBAfiliados;
     }
 }
 
