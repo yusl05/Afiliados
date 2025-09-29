@@ -17,14 +17,22 @@ namespace Afiliados
 {
     public partial class FrmAfiliados : Form
     {
+        List<string> columnas;
         public FrmAfiliados()
         {
             InitializeComponent();
-            
+            columnas = new List<string>();
+            columnas.Add("ID");
+            columnas.Add("ENTIDAD");
+            columnas.Add("MUNICIPIO");
+            columnas.Add("NOMBRE");
+            columnas.Add("FECHA_AFILIACION");
+            columnas.Add("STATUS");
         }
 
         Thread hilo;
         string archivo;
+        DataTable dt;
         private void btnCargar_Click(object sender, EventArgs e)
         {
             if (oFDAfiliados.ShowDialog() == DialogResult.OK)
@@ -38,133 +46,134 @@ namespace Afiliados
 
         private void CargarExcel(string ruta)
         {
-            List <String> municipios;
+            dt = new DataTable();
             ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
 
             //Thread.Sleep(100);
             using (var package = new ExcelPackage(new System.IO.FileInfo(ruta)))
             {
-                municipios = new List<String>();
                 //Tomar primera página del archivo xslx
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 
+                int columnCount = worksheet.Dimension.End.Column;
                 int rowCount = worksheet.Dimension.End.Row;
-                dGVInformacion.Rows.Add(rowCount-1);
-                String municipio = "";
-                bool tieneMunicipioEnBlanco = false;
 
-                for (int i = 2; i < rowCount+1; i++)
+                // Leer los encabezados de columna
+                foreach (var col in columnas)
                 {
-                    for (int j = 1; j < dGVInformacion.Columns.Count + 1; j++)
-                    {
-                        //Condición para colocar los diferentes estados en List
-                        if (!worksheet.Cells[i, 3].Text.Equals(municipio) && !worksheet.Cells[i, 3].Text.Equals("") &&
-                            !municipios.Contains(municipio) && !municipio.Equals(""))
-                        {
-                            municipios.Add(municipio);    
-                        }
-                        //Condición para comprobar si hay municipios con texto en blanco
-                        if (worksheet.Cells[i, 3].Text.Equals(""))
-                        {
-                            tieneMunicipioEnBlanco |= true;
-                        }
-
-                        municipio = worksheet.Cells[i, 3].Text;
-
-                        var columna = worksheet.Cells[i, j].Text;
-                        dGVInformacion.Rows[i - 2].Cells[j - 1].Value = columna;
-                    }  
-                }
-                conteoAfiliados();
-
-                //Añadir municipios a ComboBox
-                cBMunicipio.Items.Add("NINGUNO");
-                if (tieneMunicipioEnBlanco) cBMunicipio.Items.Add("SIN MUNICIPIO ASIGNADO");
-                for (int i = 0; i < municipios.Count; i++)
-                {
-                    cBMunicipio.Items.Add(municipios[i]);
+                    dt.Columns.Add(col);
                 }
 
-                rTBEstado.Text = worksheet.Cells[2, 2].Text;
-
-            }
-
-        }
-
-        private void cBMunicipio_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (cBMunicipio.Text.Equals("NINGUNO"))
-            {
-                dGVInformacion.Rows.Clear();
-                CargarExcel(archivo);
-            } else if (cBMunicipio.Text.Equals("SIN MUNICIPIO ASIGNADO"))
-            {
-                dGVInformacion.Rows.Clear();
-                ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
-
-                //Thread.Sleep(100);
-                using (var package = new ExcelPackage(new System.IO.FileInfo(archivo)))
+                for (int i = 2; i <= rowCount; i++)
                 {
-                    //Tomar primera página del archivo xslx
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
-                    int rowCount = worksheet.Dimension.End.Row;
-                    //dGVInformacion.Rows.Add(rowCount - 1);
-                    int k = 0;
-                    for (int i = 2; i < rowCount + 1; i++)
+                    DataRow renglon = dt.NewRow();
+                    for (int j = 1; j <= columnCount; j++)
                     {
-                        if (worksheet.Cells[i, 3].Text.Equals(""))
-                        {
-                            dGVInformacion.Rows.Add();
-                            for (int j = 1; j < dGVInformacion.Columns.Count + 1; j++)
-                            {
-                                var columna = worksheet.Cells[i, j].Text;
-                                dGVInformacion.Rows[k].Cells[j - 1].Value = columna;
-                            }
-                            k = k + 1;
-                        }
-
+                        renglon[j - 1] = worksheet.Cells[i, j].Text;
                     }
-                }
-            } else 
-            {
-                dGVInformacion.Rows.Clear();
-                ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
-
-                //Thread.Sleep(100);
-                using (var package = new ExcelPackage(new System.IO.FileInfo(archivo)))
-                {
-                    //Tomar primera página del archivo xslx
-                    ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
-                    int rowCount = worksheet.Dimension.End.Row;
-                    //dGVInformacion.Rows.Add(rowCount - 1);
-                    int k = 0;
-                    for (int i = 2; i < rowCount + 1; i++)
-                    {
-                        if (cBMunicipio.Text.Equals(worksheet.Cells[i, 3].Text))
-                        {
-                            dGVInformacion.Rows.Add();
-                            for (int j = 1; j < dGVInformacion.Columns.Count + 1; j++)
-                            {
-                                var columna = worksheet.Cells[i, j].Text;
-                                dGVInformacion.Rows[k].Cells[j - 1].Value = columna;
-                            }
-                            k = k + 1;
-                        }
-
-                    }
+                    dt.Rows.Add(renglon);
                 }
             }
+            mostrarEnDGV(dt);
+
+            //Llenar municipios
+            List<string> municipios = new List<string>();
+            bool tieneMunicipioEnBlanco = false;
+            String municipio = "";
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                if (!dt.Rows[i][2].ToString().Equals(municipio) && !dt.Rows[i][2].ToString().Equals("") && 
+                    !municipios.Contains(municipio) && !municipio.Equals(""))
+                {
+                    municipios.Add(municipio);
+                }
+                if (dt.Rows[i][2].ToString().Equals(""))
+                {
+                    tieneMunicipioEnBlanco |= true;
+                }
+
+                municipio = dt.Rows[i][2].ToString();
+            }
+
+            cBMunicipio.Items.Clear();
+            cBMunicipio.Items.Add("NINGUNO");
+            if (tieneMunicipioEnBlanco) cBMunicipio.Items.Add("SIN MUNICIPIO ASIGNADO");
+            for (int i = 0; i < municipios.Count; i++)
+            {
+                cBMunicipio.Items.Add(municipios[i]);
+            }
+
+            rTBEstado.Text = dt.Rows[0][1].ToString();
+            
             conteoAfiliados();
 
         }
 
-        public void conteoAfiliados()
+        private void mostrarEnDGV(DataTable informacion)
         {
-            int numAfiliados = dGVInformacion.Rows.Count - 1;
-            rTBAfiliados.Text = (numAfiliados).ToString();
+            for (int i = 0; i < informacion.Rows.Count; i++)
+            {
+                dGVInformacion.Rows.Add();
+                for (int j = 0; j < informacion.Columns.Count; j++)
+                {
+                    dGVInformacion.Rows[i].Cells[j].Value = informacion.Rows[i][j].ToString();
+                }
+            }
         }
 
+        private void cBMunicipio_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            if (cBMunicipio.Text.Equals("NINGUNO"))
+            {
+                dGVInformacion.Rows.Clear();
+                mostrarEnDGV(dt);
+            }
+            else if (cBMunicipio.Text.Equals("SIN MUNICIPIO ASIGNADO"))
+            {
+                dGVInformacion.Rows.Clear();
+                int k = 0;
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i][2].ToString() == "")
+                    {
+                        dGVInformacion.Rows.Add();
+                        for (int j = 0; j < dt.Columns.Count; j++)
+                        {
+                            dGVInformacion.Rows[k].Cells[j].Value =
+                                dt.Rows[i][j].ToString();
+                        }
+                        k++;
+                    }
+                }
+            }
+            else
+            {
+                dGVInformacion.Rows.Clear();
+                int k = 0;
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    if (dt.Rows[i][2].ToString() == cBMunicipio.Text)
+                    {
+                        dGVInformacion.Rows.Add();
+                        for (int j = 0; j < dt.Columns.Count; j++)
+                        {
+                            dGVInformacion.Rows[k].Cells[j].Value =
+                                dt.Rows[i][j].ToString();
+                        }
+                        k++;
+                    }
+                }
+            }
+
+            conteoAfiliados();
+        }
+
+        public void conteoAfiliados()
+        {
+            int numAfiliados = dGVInformacion.Rows.Count;
+            rTBAfiliados.Text = numAfiliados.ToString();
+        }
     }
 }
