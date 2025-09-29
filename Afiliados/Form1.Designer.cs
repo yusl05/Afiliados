@@ -207,6 +207,7 @@
             this.chBxFecha.TabIndex = 13;
             this.chBxFecha.Text = "FECHA";
             this.chBxFecha.UseVisualStyleBackColor = true;
+            this.chBxFecha.CheckedChanged += new System.EventHandler(this.chBxFecha_CheckedChanged);
             // 
             // oFDAfiliados
             // 
