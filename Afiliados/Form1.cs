@@ -132,7 +132,7 @@ namespace Afiliados
                 dGVInformacion.DataSource = null;
                 //Se eliminan los registros del dt clonado
                 dtMunicipio.Clear();
-                int k = 0;
+
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     if (dt.Rows[i][2].ToString() == "")
@@ -150,7 +150,7 @@ namespace Afiliados
                 dGVInformacion.DataSource = null;
                 //Se eliminan los registros del dt clonado
                 dtMunicipio.Clear();
-                int k = 0;
+
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     if (dt.Rows[i][2].ToString() == cBMunicipio.Text)
@@ -173,7 +173,47 @@ namespace Afiliados
 
         private void chBxFecha_CheckedChanged(object sender, EventArgs e)
         {
+            if (chBxFecha.Checked)
+            {
+                DateTime inicio = dTPInicio.Value.Date;
+                DateTime fin = dTPFin.Value.Date;
+                if (inicio > fin)
+                {
+                    MessageBox.Show("Sistema", "Seleccione una fecha válida", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    chBxFecha.Checked = false;
+                }
+                else
+                {
+                    DataTable dtFiltrado = dt.Clone();
+                    //Se eliminan los registros del dt clonado
+                    dtFiltrado.Clear();
 
+                    for (int i = 0; i < dGVInformacion.Rows.Count; i++)
+                    {
+                        if (dGVInformacion.Rows[i].IsNewRow) continue;
+                        string fechaCelda = dGVInformacion.Rows[i].Cells[4].Value.ToString();
+                        DateTime fechaAfiliacion = DateTime.ParseExact(fechaCelda,
+                        "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                        if (fechaAfiliacion >= inicio && fechaAfiliacion <= fin)
+                        {
+                            DataRow filaOriginal = ((DataRowView)dGVInformacion.Rows[i].DataBoundItem).Row;
+                            dtFiltrado.ImportRow(filaOriginal);
+                        }
+                    }
+                    dGVInformacion.DataSource = dtFiltrado;
+                    ajustarTamaños();
+                    conteoAfiliados();
+                }
+            } else
+            {
+                conteoAfiliados();
+                if (cBMunicipio.Items.Count > 0)
+                {
+                    cBMunicipio.SelectedIndex = 0;
+                }
+            }
+            
         }
     }
 }
