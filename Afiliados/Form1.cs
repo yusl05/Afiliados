@@ -7,6 +7,7 @@ using System.Data;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,7 +42,9 @@ namespace Afiliados
                 archivo = oFDAfiliados.FileName;
                 rTBArchivo.Text = oFDAfiliados.SafeFileName;
                 Thread h1 = new Thread(() => CargarExcel(archivo));
+                //Se inicia hilo
                 h1.Start();
+                btnCargar.Enabled = false;
             }
         }
 
@@ -63,7 +66,7 @@ namespace Afiliados
                 {
                     dt.Columns.Add(col);
                 }
-
+                //Se envía la información a DataTable
                 for (int i = 2; i <= rowCount; i++)
                 {
                     DataRow renglon = dt.NewRow();
@@ -74,7 +77,7 @@ namespace Afiliados
                     dt.Rows.Add(renglon);
                 }
             }
-
+            //Se usa hilo
             this.Invoke((MethodInvoker)delegate
             {
                 mostrarEnDGV(dt);
@@ -99,6 +102,7 @@ namespace Afiliados
 
         }
 
+        //Método para mostrar DataTable en dGVInformacion
         private void mostrarEnDGV(DataTable informacion)
         {
             dGVInformacion.Columns.Clear();
@@ -106,8 +110,10 @@ namespace Afiliados
             ajustarTamaños();
         }
 
+        //Método para ajustar atamaños en dGVInfomrmacion
         private void ajustarTamaños()
         {
+            //Condición para que no modifique alguna columna si no existe
             if (dGVInformacion.Columns.Contains("ENTIDAD"))
                 dGVInformacion.Columns["ENTIDAD"].Width = 150;
 
@@ -123,7 +129,6 @@ namespace Afiliados
             if (cBMunicipio.Text.Equals("TODOS"))
             {
                 dGVInformacion.DataSource = dt;
-                return;
             }
             else if (cBMunicipio.Text.Equals("SIN MUNICIPIO ASIGNADO"))
             {
@@ -165,6 +170,7 @@ namespace Afiliados
             conteoAfiliados();
         }
 
+        //Método para contar afiliados que se muestran en el dGVInformacion
         public void conteoAfiliados()
         {
             int numAfiliados = dGVInformacion.Rows.Count - 1;
@@ -175,9 +181,10 @@ namespace Afiliados
         {
             if (chBxFecha.Checked)
             {
+                //Se guardan los valores de los DateTimePicker
                 DateTime inicio = dTPInicio.Value.Date;
                 DateTime fin = dTPFin.Value.Date;
-
+                //Se clona el DataTable
                 DataTable dtFiltrado = dt.Clone();
                 dtFiltrado.Clear();
 
@@ -191,18 +198,22 @@ namespace Afiliados
                     DateTime fechaAfiliacion = DateTime.ParseExact(fechaCelda,
                     "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
 
+                    //Se filtra la información para solo mostrar los renglones solicitados
                     if (fechaAfiliacion >= inicio && fechaAfiliacion <= fin)
                     {
                         DataRow filaOriginal = ((DataRowView)dGVInformacion.Rows[i].DataBoundItem).Row;
                         dtFiltrado.ImportRow(filaOriginal);
                     }
                 }
+                //Se muestra la informacion en dGVInformacion 
                 dGVInformacion.DataSource = dtFiltrado;
+                //Se ajustan los tamaños y se actualiza el conteo de afiliados
                 ajustarTamaños();
                 conteoAfiliados();
             }
             if (!chBxFecha.Checked) 
             {
+                //Si no está marcado el CheckBox
                 dGVInformacion.DataSource = dt;
                 cBMunicipio.SelectedItem = "TODOS";
                 conteoAfiliados();
@@ -210,6 +221,7 @@ namespace Afiliados
             
         }
 
+        //Se reinicia la información y los elementos visuales
         private void btnReset_Click(object sender, EventArgs e)
         {
             dGVInformacion.Columns.Clear();
@@ -219,7 +231,9 @@ namespace Afiliados
             rTBEstado.Text = "";
             cBMunicipio.Items.Clear();
             cBMunicipio.Text = "";
+            btnCargar.Enabled = true;
         }
+        //Se cierra programa
 
         private void btnSalir_Click(object sender, EventArgs e)
         {
