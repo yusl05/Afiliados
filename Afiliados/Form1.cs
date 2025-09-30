@@ -24,6 +24,7 @@ namespace Afiliados
         {
             dt = new DataTable();
             InitializeComponent();
+            chBxFecha.Enabled = false;
             columnas = new List<string>();
             columnas.Add("ID");
             columnas.Add("ENTIDAD");
@@ -39,7 +40,6 @@ namespace Afiliados
             {
                 archivo = oFDAfiliados.FileName;
                 rTBArchivo.Text = oFDAfiliados.SafeFileName;
-                dGVInformacion.Rows.Clear();
                 Thread h1 = new Thread(() => CargarExcel(archivo));
                 h1.Start();
             }
@@ -50,7 +50,6 @@ namespace Afiliados
             dt = new DataTable();
             ExcelPackage.License.SetNonCommercialPersonal("Yushab Jesed Serrano López");
 
-            //Thread.Sleep(100);
             using (var package = new ExcelPackage(new System.IO.FileInfo(ruta)))
             {
                 //Tomar primera página del archivo xslx
@@ -79,9 +78,6 @@ namespace Afiliados
             this.Invoke((MethodInvoker)delegate
             {
                 mostrarEnDGV(dt);
-                /*dGVInformacion.Columns.Clear();
-                dGVInformacion.DataSource =dt;*/
-                //asignarTamaños();
                 cBMunicipio.Items.Add("TODOS");
                 cBMunicipio.Items.Add("SIN MUNICIPIO ASIGNADO");
 
@@ -96,11 +92,9 @@ namespace Afiliados
 
                 }
 
-
                 rTBEstado.Text = dt.Rows[0][1].ToString();
-
-
                 conteoAfiliados();
+                chBxFecha.Enabled = true;
             });
 
         }
@@ -114,16 +108,22 @@ namespace Afiliados
 
         private void ajustarTamaños()
         {
-            dGVInformacion.Columns["ENTIDAD"].Width = 150;
-            dGVInformacion.Columns["MUNICIPIO"].Width = 150;
-            dGVInformacion.Columns["NOMBRE"].Width = 200;
+            if (dGVInformacion.Columns.Contains("ENTIDAD"))
+                dGVInformacion.Columns["ENTIDAD"].Width = 150;
+
+            if (dGVInformacion.Columns.Contains("MUNICIPIO"))
+                dGVInformacion.Columns["MUNICIPIO"].Width = 150;
+
+            if (dGVInformacion.Columns.Contains("NOMBRE"))
+                dGVInformacion.Columns["NOMBRE"].Width = 200;
         }
 
         private void cBMunicipio_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cBMunicipio.Text.Equals("TODOS"))
             {
-                mostrarEnDGV(dt);
+                dGVInformacion.DataSource = dt;
+                return;
             }
             else if (cBMunicipio.Text.Equals("SIN MUNICIPIO ASIGNADO"))
             {
@@ -177,43 +177,53 @@ namespace Afiliados
             {
                 DateTime inicio = dTPInicio.Value.Date;
                 DateTime fin = dTPFin.Value.Date;
-                if (inicio > fin)
-                {
-                    MessageBox.Show("Sistema", "Seleccione una fecha válida", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    chBxFecha.Checked = false;
-                }
-                else
-                {
-                    DataTable dtFiltrado = dt.Clone();
-                    //Se eliminan los registros del dt clonado
-                    dtFiltrado.Clear();
 
-                    for (int i = 0; i < dGVInformacion.Rows.Count; i++)
+                DataTable dtFiltrado = dt.Clone();
+                dtFiltrado.Clear();
+
+                for (int i = 0; i < dGVInformacion.Rows.Count; i++)
+                {
+                    //Condición para no leer nulos
+                    if (dGVInformacion.Rows[i].IsNewRow) continue;
+                    //Guardar la celda de la fecha en un String
+                    string fechaCelda = dGVInformacion.Rows[i].Cells[4].Value.ToString();
+                    //Convertir la fecha a DateTime
+                    DateTime fechaAfiliacion = DateTime.ParseExact(fechaCelda,
+                    "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+
+                    if (fechaAfiliacion >= inicio && fechaAfiliacion <= fin)
                     {
-                        if (dGVInformacion.Rows[i].IsNewRow) continue;
-                        string fechaCelda = dGVInformacion.Rows[i].Cells[4].Value.ToString();
-                        DateTime fechaAfiliacion = DateTime.ParseExact(fechaCelda,
-                        "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
-
-                        if (fechaAfiliacion >= inicio && fechaAfiliacion <= fin)
-                        {
-                            DataRow filaOriginal = ((DataRowView)dGVInformacion.Rows[i].DataBoundItem).Row;
-                            dtFiltrado.ImportRow(filaOriginal);
-                        }
+                        DataRow filaOriginal = ((DataRowView)dGVInformacion.Rows[i].DataBoundItem).Row;
+                        dtFiltrado.ImportRow(filaOriginal);
                     }
-                    dGVInformacion.DataSource = dtFiltrado;
-                    ajustarTamaños();
-                    conteoAfiliados();
                 }
-            } else
-            {
+                dGVInformacion.DataSource = dtFiltrado;
+                ajustarTamaños();
                 conteoAfiliados();
-                if (cBMunicipio.Items.Count > 0)
-                {
-                    cBMunicipio.SelectedIndex = 0;
-                }
+            }
+            if (!chBxFecha.Checked) 
+            {
+                dGVInformacion.DataSource = dt;
+                cBMunicipio.SelectedItem = "TODOS";
+                conteoAfiliados();
             }
             
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            dGVInformacion.Columns.Clear();
+            dt.Rows.Clear();
+            rTBAfiliados.Text = "";
+            rTBArchivo.Text = "";
+            rTBEstado.Text = "";
+            cBMunicipio.Items.Clear();
+            cBMunicipio.Text = "";
+        }
+
+        private void btnSalir_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAfiliados));
             this.labArchivo = new System.Windows.Forms.Label();
             this.btnCargar = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labEdo = new System.Windows.Forms.Label();
             this.labMunicipio = new System.Windows.Forms.Label();
             this.cBMunicipio = new System.Windows.Forms.ComboBox();
             this.dGVInformacion = new System.Windows.Forms.DataGridView();
@@ -49,8 +50,9 @@
             this.dTPInicio = new System.Windows.Forms.DateTimePicker();
             this.dTPFin = new System.Windows.Forms.DateTimePicker();
             this.labInicio = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.labFin = new System.Windows.Forms.Label();
             this.rTBAfiliados = new System.Windows.Forms.RichTextBox();
+            this.btnSalir = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dGVInformacion)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,32 +68,34 @@
             // 
             // btnCargar
             // 
+            this.btnCargar.BackColor = System.Drawing.SystemColors.Info;
             this.btnCargar.Location = new System.Drawing.Point(381, 36);
             this.btnCargar.Name = "btnCargar";
             this.btnCargar.Size = new System.Drawing.Size(106, 44);
             this.btnCargar.TabIndex = 1;
             this.btnCargar.Text = "CARGAR";
-            this.btnCargar.UseVisualStyleBackColor = true;
+            this.btnCargar.UseVisualStyleBackColor = false;
             this.btnCargar.Click += new System.EventHandler(this.btnCargar_Click);
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(1017, 15);
+            this.btnReset.Location = new System.Drawing.Point(894, 12);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(101, 43);
             this.btnReset.TabIndex = 3;
             this.btnReset.Text = "RESET";
             this.btnReset.UseVisualStyleBackColor = true;
+            this.btnReset.Click += new System.EventHandler(this.btnReset_Click);
             // 
-            // label1
+            // labEdo
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(28, 118);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(97, 22);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "ESTADO:";
+            this.labEdo.AutoSize = true;
+            this.labEdo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labEdo.Location = new System.Drawing.Point(28, 118);
+            this.labEdo.Name = "labEdo";
+            this.labEdo.Size = new System.Drawing.Size(97, 22);
+            this.labEdo.TabIndex = 4;
+            this.labEdo.Text = "ESTADO:";
             // 
             // labMunicipio
             // 
@@ -105,6 +109,7 @@
             // 
             // cBMunicipio
             // 
+            this.cBMunicipio.BackColor = System.Drawing.SystemColors.InactiveCaption;
             this.cBMunicipio.FormattingEnabled = true;
             this.cBMunicipio.Location = new System.Drawing.Point(148, 149);
             this.cBMunicipio.Name = "cBMunicipio";
@@ -114,6 +119,7 @@
             // 
             // dGVInformacion
             // 
+            this.dGVInformacion.BackgroundColor = System.Drawing.SystemColors.InactiveCaption;
             this.dGVInformacion.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dGVInformacion.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Column1,
@@ -238,15 +244,15 @@
             this.labInicio.TabIndex = 16;
             this.labInicio.Text = "INICIO";
             // 
-            // label2
+            // labFin
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(334, 605);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(41, 22);
-            this.label2.TabIndex = 17;
-            this.label2.Text = "FIN";
+            this.labFin.AutoSize = true;
+            this.labFin.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labFin.Location = new System.Drawing.Point(334, 605);
+            this.labFin.Name = "labFin";
+            this.labFin.Size = new System.Drawing.Size(41, 22);
+            this.labFin.TabIndex = 17;
+            this.labFin.Text = "FIN";
             // 
             // rTBAfiliados
             // 
@@ -256,13 +262,24 @@
             this.rTBAfiliados.TabIndex = 18;
             this.rTBAfiliados.Text = "";
             // 
+            // btnSalir
+            // 
+            this.btnSalir.Location = new System.Drawing.Point(1017, 12);
+            this.btnSalir.Name = "btnSalir";
+            this.btnSalir.Size = new System.Drawing.Size(101, 43);
+            this.btnSalir.TabIndex = 19;
+            this.btnSalir.Text = "SALIR";
+            this.btnSalir.UseVisualStyleBackColor = true;
+            this.btnSalir.Click += new System.EventHandler(this.btnSalir_Click);
+            // 
             // FrmAfiliados
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1138, 647);
+            this.Controls.Add(this.btnSalir);
             this.Controls.Add(this.rTBAfiliados);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.labFin);
             this.Controls.Add(this.labInicio);
             this.Controls.Add(this.dTPFin);
             this.Controls.Add(this.dTPInicio);
@@ -273,10 +290,11 @@
             this.Controls.Add(this.dGVInformacion);
             this.Controls.Add(this.cBMunicipio);
             this.Controls.Add(this.labMunicipio);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labEdo);
             this.Controls.Add(this.btnReset);
             this.Controls.Add(this.btnCargar);
             this.Controls.Add(this.labArchivo);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmAfiliados";
             this.Text = "AFILIADOS";
             ((System.ComponentModel.ISupportInitialize)(this.dGVInformacion)).EndInit();
@@ -290,7 +308,7 @@
         private System.Windows.Forms.Label labArchivo;
         private System.Windows.Forms.Button btnCargar;
         private System.Windows.Forms.Button btnReset;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labEdo;
         private System.Windows.Forms.Label labMunicipio;
         private System.Windows.Forms.ComboBox cBMunicipio;
         private System.Windows.Forms.DataGridView dGVInformacion;
@@ -308,8 +326,9 @@
         private System.Windows.Forms.DateTimePicker dTPInicio;
         private System.Windows.Forms.DateTimePicker dTPFin;
         private System.Windows.Forms.Label labInicio;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label labFin;
         private System.Windows.Forms.RichTextBox rTBAfiliados;
+        private System.Windows.Forms.Button btnSalir;
     }
 }
 
